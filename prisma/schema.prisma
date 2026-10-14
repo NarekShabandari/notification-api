@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Channel {
+    IN_APP
+    EMAIL
+}
+
+enum Status {
+    PENDING
+    SENT
+    FAILED
+}
+
+model User {
+    id  String  @id @default(uuid())
+    email String
+    name    String?
+    createdAt   DateTime    @default(now())
+    notifications   Notification[]
+    preference Preference?
+}
+
+model Preference {
+  id           String  @id @default(uuid())
+  userId       String  @unique
+  emailEnabled Boolean @default(true)
+  inAppEnabled Boolean @default(true)
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+    id  String  @id @default(uuid())
+    userId  String
+    type    String
+    title   String
+    body    String?
+    channel Channel @default(IN_APP)
+    status  Status  @default(PENDING)
+    read    Boolean @default(false)
+    readAt  DateTime?
+    error   String?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    user    User    @relation(fields: [userId],references: [id],onDelete: Cascade)
+
+    @@index([userId, read, createdAt])
+}
