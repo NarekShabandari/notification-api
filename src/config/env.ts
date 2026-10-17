@@ -8,6 +8,7 @@ const schema = z.object({
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DB: z.string(),
   POSTGRES_PORT: z.coerce.number().default(5434),
+  REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
 });
 
